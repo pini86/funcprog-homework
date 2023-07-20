@@ -12,13 +12,18 @@
  *
  * Если какие либо функции написаны руками (без использования библиотек) это не является ошибкой
  */
-import { equals } from "ramda";
+import { equals, prop } from "ramda";
 
 const isRed = equals("red");
 const isWhite = equals("white");
 const isGreen = equals("green");
 const isOrange = equals("orange");
 const isBlue = equals("blue");
+
+const getStar = prop('star');
+const getTriangle = prop('triangle');
+const getSquare = prop('square');
+const getCircle = prop('circle');
 
 // 1. Красная звезда, зеленый квадрат, все остальные белые.
 export const validateFieldN1 = ({ star, square, triangle, circle }) => {
