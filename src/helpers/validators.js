@@ -12,7 +12,15 @@
  *
  * Если какие либо функции написаны руками (без использования библиотек) это не является ошибкой
  */
-import { equals, prop } from "ramda";
+import {
+    equals,
+    prop,
+    compose,
+    propEq,
+    countBy,
+    identity,
+    values,
+} from "ramda";
 
 const isRed = equals("red");
 const isWhite = equals("white");
@@ -20,10 +28,13 @@ const isGreen = equals("green");
 const isOrange = equals("orange");
 const isBlue = equals("blue");
 
-const getStar = prop('star');
-const getTriangle = prop('triangle');
-const getSquare = prop('square');
-const getCircle = prop('circle');
+const getStar = prop("star");
+const getTriangle = prop("triangle");
+const getSquare = prop("square");
+const getCircle = prop("circle");
+
+const numberOfColors = compose(countBy(identity), values);
+const allHasColor = (color) => compose(propEq(color, 4), numberOfColors);
 
 // 1. Красная звезда, зеленый квадрат, все остальные белые.
 export const validateFieldN1 = ({ star, square, triangle, circle }) => {
@@ -50,13 +61,13 @@ export const validateFieldN5 = () => false;
 export const validateFieldN6 = () => false;
 
 // 7. Все фигуры оранжевые.
-export const validateFieldN7 = () => false;
+export const validateFieldN7 = allHasColor('orange');
 
 // 8. Не красная и не белая звезда, остальные – любого цвета.
 export const validateFieldN8 = () => false;
 
 // 9. Все фигуры зеленые.
-export const validateFieldN9 = () => false;
+export const validateFieldN9 = allHasColor('green');
 
 // 10. Треугольник и квадрат одного цвета (не белого), остальные – любого цвета
 export const validateFieldN10 = () => false;
