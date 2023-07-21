@@ -48,6 +48,8 @@ const greatOrEq2 = gte(__, 2)
 const getGreen = prop('green');
 const numberOfGreenColors = compose(getGreen, numColors);
 
+const redEqBlue = ({blue, red}) => blue === red;
+
 // 1. Красная звезда, зеленый квадрат, все остальные белые.
 export const validateFieldN1 = allPass([
     isRedStar,
@@ -60,7 +62,7 @@ export const validateFieldN1 = allPass([
 export const validateFieldN2 = compose(greatOrEq2, numberOfGreenColors);
 
 // 3. Количество красных фигур равно кол-ву синих.
-export const validateFieldN3 = () => false;
+export const validateFieldN3 = compose(redEqBlue, numColors);
 
 // 4. Синий круг, красная звезда, оранжевый квадрат треугольник любого цвета
 export const validateFieldN4 = () => false;
