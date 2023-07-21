@@ -50,6 +50,9 @@ const numberOfGreenColors = compose(getGreen, numColors);
 
 const redEqBlue = ({blue, red}) => blue === red;
 
+const isBlueCircle = compose(isBlue, getCircle);
+const isOrangeSquare = compose(isOrange, getSquare);
+
 // 1. Красная звезда, зеленый квадрат, все остальные белые.
 export const validateFieldN1 = allPass([
     isRedStar,
@@ -65,7 +68,7 @@ export const validateFieldN2 = compose(greatOrEq2, numberOfGreenColors);
 export const validateFieldN3 = compose(redEqBlue, numColors);
 
 // 4. Синий круг, красная звезда, оранжевый квадрат треугольник любого цвета
-export const validateFieldN4 = () => false;
+export const validateFieldN4 = allPass([isRedStar, isBlueCircle, isOrangeSquare]);
 
 // 5. Три фигуры одного любого цвета кроме белого (четыре фигуры одного цвета – это тоже true).
 export const validateFieldN5 = () => false;
