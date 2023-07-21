@@ -23,6 +23,8 @@ import {
     allPass,
     __,
     gte,
+    any,
+    dissoc,
 } from "ramda";
 
 const isRed = equals("red");
@@ -53,6 +55,14 @@ const redEqBlue = ({blue, red}) => blue === red;
 const isBlueCircle = compose(isBlue, getCircle);
 const isOrangeSquare = compose(isOrange, getSquare);
 
+const greatOrEq3 = gte(__, 3)
+const greatOrEq3Any = any(greatOrEq3);
+const greatOrEq3AnyVal = compose(greatOrEq3Any, values);
+const dissocWhite = dissoc('white');
+const numColorsWOWhite = compose(dissocWhite, numColors);
+
+
+
 // 1. Красная звезда, зеленый квадрат, все остальные белые.
 export const validateFieldN1 = allPass([
     isRedStar,
@@ -71,7 +81,7 @@ export const validateFieldN3 = compose(redEqBlue, numColors);
 export const validateFieldN4 = allPass([isRedStar, isBlueCircle, isOrangeSquare]);
 
 // 5. Три фигуры одного любого цвета кроме белого (четыре фигуры одного цвета – это тоже true).
-export const validateFieldN5 = () => false;
+export const validateFieldN5 = compose(greatOrEq3AnyVal, numColorsWOWhite);
 
 // 6. Ровно две зеленые фигуры (одна из зелёных – это треугольник), плюс одна красная. Четвёртая оставшаяся любого доступного цвета, но не нарушающая первые два условия
 export const validateFieldN6 = () => false;
