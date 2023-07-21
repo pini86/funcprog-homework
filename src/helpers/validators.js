@@ -25,6 +25,7 @@ import {
     gte,
     any,
     dissoc,
+    complement,
 } from "ramda";
 
 const isRed = equals("red");
@@ -61,7 +62,15 @@ const greatOrEq3AnyVal = compose(greatOrEq3Any, values);
 const dissocWhite = dissoc('white');
 const numColorsWOWhite = compose(dissocWhite, numColors);
 
+const isGreenTriangle = compose(isGreen, getTriangle);
+const propEq2Greens = propEq('green', 2);
+const greenColors2 = compose(propEq2Greens, numColors);
+const propEq1Red = propEq('red', 1);
+const redColor1 = compose(propEq1Red, numColors);
 
+const isRedStarNo = complement(isRedStar);
+const isWhiteStar = compose(isWhite, getStar);
+const isWhiteStarNo = complement(isWhiteStar);
 
 // 1. Красная звезда, зеленый квадрат, все остальные белые.
 export const validateFieldN1 = allPass([
@@ -84,13 +93,13 @@ export const validateFieldN4 = allPass([isRedStar, isBlueCircle, isOrangeSquare]
 export const validateFieldN5 = compose(greatOrEq3AnyVal, numColorsWOWhite);
 
 // 6. Ровно две зеленые фигуры (одна из зелёных – это треугольник), плюс одна красная. Четвёртая оставшаяся любого доступного цвета, но не нарушающая первые два условия
-export const validateFieldN6 = () => false;
+export const validateFieldN6 = allPass([isGreenTriangle, greenColors2, redColor1]);
 
 // 7. Все фигуры оранжевые.
 export const validateFieldN7 = allHasColor("orange");
 
 // 8. Не красная и не белая звезда, остальные – любого цвета.
-export const validateFieldN8 = () => false;
+export const validateFieldN8 = allPass([isRedStarNo, isWhiteStarNo]);
 
 // 9. Все фигуры зеленые.
 export const validateFieldN9 = allHasColor("green");
