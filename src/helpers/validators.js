@@ -72,6 +72,11 @@ const isRedStarNo = complement(isRedStar);
 const isWhiteStar = compose(isWhite, getStar);
 const isWhiteStarNo = complement(isWhiteStar);
 
+const isWhiteSquare = compose(isWhite, getSquare);
+const isWhiteSquareNo = complement(isWhiteSquare);
+const isWhiteTriangleNo = complement(isWhiteTriangle);
+const squareEqTriangle = ({square, triangle}) => square === triangle;
+
 // 1. Красная звезда, зеленый квадрат, все остальные белые.
 export const validateFieldN1 = allPass([
     isRedStar,
@@ -105,4 +110,4 @@ export const validateFieldN8 = allPass([isRedStarNo, isWhiteStarNo]);
 export const validateFieldN9 = allHasColor("green");
 
 // 10. Треугольник и квадрат одного цвета (не белого), остальные – любого цвета
-export const validateFieldN10 = () => false;
+export const validateFieldN10 = allPass([isWhiteSquareNo, isWhiteTriangleNo, squareEqTriangle]);
