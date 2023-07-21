@@ -21,6 +21,8 @@ import {
     identity,
     values,
     allPass,
+    __,
+    gte,
 } from "ramda";
 
 const isRed = equals("red");
@@ -42,6 +44,10 @@ const isGreenSquare = compose(isGreen, getSquare);
 const isWhiteTriangle = compose(isWhite, getTriangle);
 const isWhiteCircle = compose(isWhite, getCircle);
 
+const greatOrEq2 = gte(__, 2)
+const getGreen = prop('green');
+const numberOfGreenColors = compose(getGreen, numColors);
+
 // 1. Красная звезда, зеленый квадрат, все остальные белые.
 export const validateFieldN1 = allPass([
     isRedStar,
@@ -51,7 +57,7 @@ export const validateFieldN1 = allPass([
 ]);
 
 // 2. Как минимум две фигуры зеленые.
-export const validateFieldN2 = () => false;
+export const validateFieldN2 = compose(greatOrEq2, numberOfGreenColors);
 
 // 3. Количество красных фигур равно кол-ву синих.
 export const validateFieldN3 = () => false;
