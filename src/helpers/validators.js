@@ -20,6 +20,7 @@ import {
     countBy,
     identity,
     values,
+    allPass,
 } from "ramda";
 
 const isRed = equals("red");
@@ -33,17 +34,21 @@ const getTriangle = prop("triangle");
 const getSquare = prop("square");
 const getCircle = prop("circle");
 
-const numberOfColors = compose(countBy(identity), values);
-const allHasColor = (color) => compose(propEq(color, 4), numberOfColors);
+const numColors = compose(countBy(identity), values);
+const allHasColor = (color) => compose(propEq(color, 4), numColors);
+
+const isRedStar = compose(isRed, getStar);
+const isGreenSquare = compose(isGreen, getSquare);
+const isWhiteTriangle = compose(isWhite, getTriangle);
+const isWhiteCircle = compose(isWhite, getCircle);
 
 // 1. Красная звезда, зеленый квадрат, все остальные белые.
-export const validateFieldN1 = ({ star, square, triangle, circle }) => {
-    if (triangle !== "white" || circle !== "white") {
-        return false;
-    }
-
-    return star === "red" && square === "green";
-};
+export const validateFieldN1 = allPass([
+    isRedStar,
+    isGreenSquare,
+    isWhiteTriangle,
+    isWhiteCircle,
+]);
 
 // 2. Как минимум две фигуры зеленые.
 export const validateFieldN2 = () => false;
@@ -61,13 +66,13 @@ export const validateFieldN5 = () => false;
 export const validateFieldN6 = () => false;
 
 // 7. Все фигуры оранжевые.
-export const validateFieldN7 = allHasColor('orange');
+export const validateFieldN7 = allHasColor("orange");
 
 // 8. Не красная и не белая звезда, остальные – любого цвета.
 export const validateFieldN8 = () => false;
 
 // 9. Все фигуры зеленые.
-export const validateFieldN9 = allHasColor('green');
+export const validateFieldN9 = allHasColor("green");
 
 // 10. Треугольник и квадрат одного цвета (не белого), остальные – любого цвета
 export const validateFieldN10 = () => false;
