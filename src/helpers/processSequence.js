@@ -14,38 +14,75 @@
  * Иногда промисы от API будут приходить в состояние rejected, (прямо как и API в реальной жизни)
  * Ответ будет приходить в поле {result}
  */
- import Api from '../tools/api';
 
- const api = new Api();
+import {
+    __,
+    assoc,
+    length,
+    pipe,
+    prop,
+    allPass,
+    otherwise,
+    partial,
+    tap,
+    andThen,
+    gte,
+    lt,
+    test,
+    ifElse,
+} from "ramda";
+import Api from "../tools/api";
 
- /**
-  * Я – пример, удали меня
-  */
- const wait = time => new Promise(resolve => {
-     setTimeout(resolve, time);
- })
+const api = new Api();
 
- const processSequence = ({value, writeLog, handleSuccess, handleError}) => {
-     /**
-      * Я – пример, удали меня
-      */
-     writeLog(value);
+const NUMBERS = "https://api.tech/numbers/base";
+const ANIMALS = "https://animals.tech/";
+const NUMBER_PARAMS = {
+    from: 10,
+    to: 2,
+};
 
-     api.get('https://api.tech/numbers/base', {from: 2, to: 10, number: '01011010101'}).then(({result}) => {
-         writeLog(result);
-     });
+const toSquare = (num) => num * num;
+const restFromDivByThree = (num) => num % 3;
 
-     wait(2500).then(() => {
-         writeLog('SecondLog')
+const responseToString = pipe(prop("result"), String);
 
-         return wait(1500);
-     }).then(() => {
-         writeLog('ThirdLog');
+const addParamForNumbers = assoc("number", __, NUMBER_PARAMS);
 
-         return wait(400);
-     }).then(() => {
-         handleSuccess('Done');
-     });
- }
+const apiGetNumberBinaryBase = pipe(addParamForNumbers, api.get(NUMBERS));
+const apiGetAnimal = (val) => api.get(ANIMALS + String(val), {});
+
+const greaterThenTwo = pipe(length, gte(__, 2));
+const lessThanTen = pipe(length, lt(__, 10));
+const regexTest = test(/^\d+(.\d+)?$/);
+
+const isValid = allPass([greaterThenTwo, lessThanTen, regexTest]);
+
+const processSequence = ({ value, writeLog, handleSuccess, handleError }) => {
+    const writeToLog = tap(writeLog);
+    const writeRespToLog = andThen(writeToLog);
+    const handleValidationError = partial(handleError, ["ValidationError"]);
+    const onSuccess = andThen(handleSuccess);
+    const onError = otherwise(handleError);
+    const sequence = pipe(
+        writeToLog,
+        apiGetNumberBinaryBase,
+        andThen(responseToString),
+        writeRespToLog,
+        andThen(length),
+        writeRespToLog,
+        andThen(toSquare),
+        writeRespToLog,
+        andThen(restFromDivByThree),
+        writeRespToLog,
+        andThen(apiGetAnimal),
+        andThen(responseToString),
+        writeRespToLog,
+        onSuccess,
+        onError
+    );
+    const checkInput = ifElse(isValid, sequence, handleValidationError);
+    checkInput(value);
+};
 
 export default processSequence;
